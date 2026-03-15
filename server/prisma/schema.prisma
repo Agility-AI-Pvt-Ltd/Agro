@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(uuid())
+  phone          String    @unique
+  is_verified    Boolean   @default(false)
+  last_active_at DateTime?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  profile         FarmerProfile?
+  crops           Crop[]
+  otps            Otp[]
+  refreshTokens   RefreshToken[]
+  activities      ActivityLog[]
+  notifications   Notification[]
+  marketQueries   MarketQuery[]
+  advisoryQueries AdvisoryQuery[]
+}
+
+model Otp {
+  id         String   @id @default(uuid())
+  user_id    String?
+  phone      String
+  hash       String
+  purpose    String
+  used       Boolean  @default(false)
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  user_id    String
+  token_id   String   @unique
+  revoked    Boolean  @default(false)
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model FarmerProfile {
+  id           String   @id @default(uuid())
+  user_id      String   @unique
+  name         String
+  phone        String
+  address      String?
+  location_lat Float?
+  location_lng Float?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Crop {
+  id                    String    @id @default(uuid())
+  user_id               String
+  crop_type             String
+  sowing_date           DateTime
+  expected_harvest_date DateTime?
+  area_acres            Float?
+  status                String    @default("active")
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  user_id    String?
+  action     String
+  endpoint   String
+  metadata   Json?
+  created_at DateTime @default(now())
+
+  user User? @relation(fields: [user_id], references: [id])
+}
+
+model Notification {
+  id         String    @id @default(uuid())
+  user_id    String
+  type       String
+  message    String
+  sent_at    DateTime?
+  created_at DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model MarketQuery {
+  id          String   @id @default(uuid())
+  user_id     String
+  crop_type   String
+  query       String
+  ai_response Json?
+  created_at  DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model AdvisoryQuery {
+  id                String   @id @default(uuid())
+  user_id           String
+  issue_description String
+  ai_response       Json?
+  created_at        DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
