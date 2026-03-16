@@ -1,8 +1,9 @@
 # ─── Multi-stage build for Google Cloud Run ──────────────────────────────────
-FROM node:20-alpine AS base
+# Use debian-based image to fix Prisma OpenSSL issue (alpine is missing libssl)
+FROM node:20-slim AS base
 
-# Install dumb-init for proper signal handling in containers
-RUN apk add --no-cache dumb-init
+# Install OpenSSL + dumb-init for Prisma compatibility and graceful shutdown
+RUN apt-get update -y && apt-get install -y openssl dumb-init && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -10,7 +11,6 @@ WORKDIR /app
 FROM base AS deps
 
 COPY server/package*.json ./
-# Use npm ci for reproducible installs (uses package-lock.json)
 RUN npm ci --omit=dev
 
 # ─── Production image ─────────────────────────────────────────────────────────
@@ -21,18 +21,15 @@ ENV NODE_ENV=production
 # Copy installed dependencies
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy server source
+# Copy server source + prisma schema
 COPY server/ ./server/
-
-# Copy package.json for metadata
 COPY server/package.json ./package.json
 
-# Generate Prisma client
+# Generate Prisma client (needs schema file, not DB connection)
 RUN cd server && npx prisma generate
 
-# Cloud Run injects PORT env var; our server respects it
-EXPOSE 3000
+EXPOSE 8080
 
-# Use dumb-init to forward signals properly (graceful shutdown)
+# Use dumb-init for proper signal forwarding (graceful shutdown on Cloud Run)
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "server/api-gateway/src/index.js"]
