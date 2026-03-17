@@ -58,7 +58,7 @@ const HomePage = () => {
           <span className="font-medium cursor-pointer" onClick={() => goTo('/home')}>Home</span>
           <span className="cursor-pointer hover:text-[#2D5A3D]" onClick={() => goTo('/under-development')}>Dashboard</span>
           <span className="cursor-pointer hover:text-[#2D5A3D]" onClick={() => goTo('/under-development')}>Plan</span>
-          <span className="cursor-pointer hover:text-[#2D5A3D]" onClick={() => goTo('/under-development')}>AI Assistant</span>
+          <span className="cursor-pointer hover:text-[#2D5A3D]" onClick={() => goTo('/chatbot')}>AI Assistant</span>
           <span className="cursor-pointer hover:text-[#2D5A3D]" onClick={() => goTo('/under-development')}>Trends</span>
         </div>
       </div>
@@ -175,7 +175,7 @@ const HomePage = () => {
           {/* Ask AI */}
           <div
             className="bg-white p-5 rounded-2xl shadow-[-4px_6px_12px_rgba(0,0,0,0.12),4px_6px_12px_rgba(0,0,0,0.12)] flex flex-col gap-3 cursor-pointer"
-            onClick={() => goTo('/under-development')}
+            onClick={() => goTo('/chatbot')}
           >
             <div className="flex justify-between items-center">
               <div className="w-12 h-12 bg-[#d9e6df] rounded-xl flex items-center justify-center">
@@ -332,7 +332,7 @@ const HomePage = () => {
               </div>
               <button
                 className="bg-white flex flex-row items-center justify-center gap-2 font-semibold text-[#2D5A3D] w-full py-4 rounded-lg"
-                onClick={() => goTo('/under-development')}
+                onClick={() => goTo('/chatbot')}
               >
                 Open AI Assistant
                 <img src="/ArrowRight.svg" alt="arrow" className="w-6 h-6" />
@@ -428,7 +428,7 @@ const HomePage = () => {
           <img src="/Dash.svg" className="w-6 h-6 mb-1" />
           <span className="text-xs">Dashboard</span>
         </div>
-        <div className="flex flex-col items-center text-gray-500 cursor-pointer" onClick={() => goTo('/under-development')}>
+        <div className="flex flex-col items-center text-gray-500 cursor-pointer" onClick={() => goTo('/chatbot')}>
           <img src="/Star.svg" className="w-6 h-6 mb-1" />
           <span className="text-xs">AI</span>
         </div>

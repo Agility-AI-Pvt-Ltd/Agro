@@ -38,15 +38,10 @@ const app = express();
 app.use(helmet());
 
 // ─── CORS ─────────────────────────────────────────────────────────────────
-const corsOrigins = process.env.CORS_ORIGINS || "*";
-app.use(
-  cors({
-    origin: corsOrigins === "*" ? "*" : corsOrigins.split(",").map((o) => o.trim()),
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: corsOrigins !== "*",
-  })
-);
+app.use(cors({
+  origin: "*",
+  credentials: true
+}));
 
 // ─── Rate Limiting ─────────────────────────────────────────────────────────
 const limiter = rateLimit({
